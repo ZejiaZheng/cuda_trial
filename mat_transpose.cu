@@ -4,7 +4,7 @@
 #include "utils.h"
 
 const int N = 1024;  // we are transposing a N by N mat
-const int K = 1;
+const int K = 16;
 
 void fill_matrix(float* mat){
     for (int i = 0; i < N*N; i++){
@@ -41,6 +41,13 @@ __global__ void transpose_parallel_row(float* mat, float* mat_new){
     for (int j = 0; j < N; j++){
         mat_new[j+i*N] = mat[i+j*N];
     }
+}
+
+__global__ void transpose_parallel_element(float* mat, float* mat_new){
+    int i = blockIdx.x * K + threadIdx.x;
+    int j = blockIdx.y * k + threadIdx.y;
+
+    out[j + i*N] = in[i + j*N];
 }
 
 int main(int argc, char const *argv[])
@@ -85,6 +92,19 @@ int main(int argc, char const *argv[])
     cudaMemcpy(d_out, mat_new, mat_size, cudaMemcpyDeviceToHost);
 
     printf("transpose_parallel_row: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
+
+    // transpose parallel element
+    dim3 blocks(N/K, N/K);
+    dim3 threads(K,K);
+    
+    timer.Start();
+    transpose_parallel_element<<<blocks,threads>>>(d_in, d_out);
+    timer.Stop();
+
+    cudaMemcpy(d_out, mat_new, mat_size, cudaMemcpyDeviceToHost);
+
+    printf("transpose_parallel_element: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
+
 
 
     // show orignal mat, for debug purposes
