@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 
     fill_matrix(mat);
 
-    transposed_cpu(mat, mat_new);
+    transpose_cpu(mat, mat_new);
 
     // show orignal mat, for debug purposes
     printf("original_mat: \n");
