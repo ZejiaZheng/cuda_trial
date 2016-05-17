@@ -22,8 +22,9 @@ int main(int argc, char const *argv[])
     printf("original_mat: \n");
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
-            printf("%3f", mat[i*N + j]);
+            printf("%3.1f ", mat[i*N + j]);
         }
+        printf("\n");
     }
 
     return 0;
