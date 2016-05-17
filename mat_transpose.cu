@@ -20,10 +20,11 @@ int main(int argc, char const *argv[])
 
     // show orignal mat, for debug purposes
     printf("original_mat: \n");
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
-            printf("%3f", mat[i][j]);
+            printf("%3f", mat[i*N + j]);
         }
+    }
 
     return 0;
 }
