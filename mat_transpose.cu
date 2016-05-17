@@ -55,8 +55,7 @@ int main(int argc, char const *argv[])
     clock_t start = clock(), diff;
     transpose_cpu(mat, mat_gold);
     diff = clock() - start;
-    int msec = diff * 1000 / CLOCKS_PER_SEC;
-    printf("CPU Transpose time taken: %f milliseconds \n", msec);
+    printf("CPU Transpose time taken: %f milliseconds \n", diff);
 
 
     float *d_in, *d_out;
