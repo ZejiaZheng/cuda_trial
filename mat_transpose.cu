@@ -35,6 +35,14 @@ __global__ void transpose_serial(float* mat, float* mat_new){
     }
 }
 
+__global__ transpose_parallel_row(float* mat, float* mat_new){
+    int i = threadIdx.x;
+
+    for (int j = 0; j < N; j++){
+        mat_new[j+i*N] = mat[i+j*N];
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     size_t mat_size = N * N * sizeof(float);
@@ -48,7 +56,7 @@ int main(int argc, char const *argv[])
     transpose_cpu(mat, mat_gold);
     diff = clock() - start;
     int msec = diff * 1000 / CLOCKS_PER_SEC;
-    printf("CPU Transpose time taken %d seconds, %d milliseconds \n", msec/1000, msec%1000);
+    printf("CPU Transpose time taken: %g milliseconds \n", msec/1000, msec%1000);
 
 
     float *d_in, *d_out;
@@ -58,15 +66,25 @@ int main(int argc, char const *argv[])
     cudaMemcpy(d_in, mat, mat_size, cudaMemcpyHostToDevice);
 
     GpuTimer timer;
+    
+    // transpose serial
     timer.Start();
     transpose_serial<<<1,1>>>(d_in, d_out);
     timer.Stop();
 
     cudaMemcpy(d_out, mat_new, mat_size, cudaMemcpyDeviceToHost);
 
-    printf("transpose_parallel_per_row: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
+    printf("transpose_serial: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
 
-    
+    // transpose parallel row
+    timer.Start();
+    transpose_parallel_row<<<1,N>>>(d_in, d_out);
+    timer.Stop();
+
+    cudaMemcpy(d_out, mat_new, mat_size, cudaMemcpyDeviceToHost);
+
+    printf("transpose_parallel_row: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
+
 
     // show orignal mat, for debug purposes
     /*printf("original_mat: \n");
@@ -84,7 +102,8 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }*/
-
+    cudaFree(d_in);
+    cudaFree(d_out);
     free(mat);
     free(mat_gold);
 
