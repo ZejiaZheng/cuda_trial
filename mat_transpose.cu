@@ -12,7 +12,7 @@ void fill_matrix(float* mat){
     }
 }
 
-void compare_matrices(float* mat1, float* mat2){
+int compare_matrices(float* mat1, float* mat2){
     for (int i = 0; i < N*N; i++){
         if(mat1[i] != mat2[i]) return 0;
     }
@@ -27,7 +27,7 @@ void transpose_cpu(float* mat, float* mat_new){
     }
 }
 
-void transpose_serial(float* mat, float* mat_new){
+__global__ void transpose_serial(float* mat, float* mat_new){
     for (int i = 0; i < N; i++){
         for (int j = 0; j< N; j++){
             mat_new[j*N + i] = mat[i*N + j];
