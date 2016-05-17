@@ -2,7 +2,7 @@
 #include "timer.h"
 #include "utils.h"
 
-const int N = 1024;  // we are transposing a N by N mat
+const int N = 8;  // we are transposing a N by N mat
 const int K = 1;
 
 void fill_matrix(float* mat){
