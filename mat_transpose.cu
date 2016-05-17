@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <time.h>
 #include "timer.h"
 #include "utils.h"
 
-const int N = 8;  // we are transposing a N by N mat
+const int N = 1024;  // we are transposing a N by N mat
 const int K = 1;
 
 void fill_matrix(float* mat){
@@ -27,10 +28,16 @@ int main(int argc, char const *argv[])
 
     fill_matrix(mat);
 
+    clock_t start = clock(), diff;
     transpose_cpu(mat, mat_new);
+    diff = clock() - start;
+    int msec = diff * 1000 / CLOCKS_PER_SEC;
+    printf("CPU Transpose time taken %d seconds, %d milliseconds", msec/1000, msec%1000);
+
+    
 
     // show orignal mat, for debug purposes
-    printf("original_mat: \n");
+    /*printf("original_mat: \n");
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
             printf("%3.1f ", mat[i*N + j]);
@@ -44,7 +51,7 @@ int main(int argc, char const *argv[])
             printf("%3.1f ", mat_new[i*N + j]);
         }
         printf("\n");
-    }
+    }*/
 
     free(mat);
     free(mat_new);
