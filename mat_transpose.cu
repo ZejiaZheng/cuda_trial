@@ -11,7 +11,7 @@ void fill_matrix(float* mat){
     }
 }
 
-int int main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
     size_t mat_size = N * N * sizeof(float);
     float* mat = (float *) malloc(mat_size);
