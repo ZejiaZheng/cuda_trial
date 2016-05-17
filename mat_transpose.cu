@@ -45,9 +45,9 @@ __global__ void transpose_parallel_row(float* mat, float* mat_new){
 
 __global__ void transpose_parallel_element(float* mat, float* mat_new){
     int i = blockIdx.x * K + threadIdx.x;
-    int j = blockIdx.y * k + threadIdx.y;
+    int j = blockIdx.y * K + threadIdx.y;
 
-    out[j + i*N] = in[i + j*N];
+    mat_new[j + i*N] = mat[i + j*N];
 }
 
 int main(int argc, char const *argv[])
