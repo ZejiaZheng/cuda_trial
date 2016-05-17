@@ -7,7 +7,7 @@ const int K = 1;
 
 void fill_matrix(float* mat){
     for (int i = 0; i < N*N; i++){
-        mat[i] = (float)j;
+        mat[i] = (float)i;
     }
 }
 
