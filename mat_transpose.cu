@@ -52,11 +52,12 @@ int main(int argc, char const *argv[])
 
     fill_matrix(mat);
 
-    clock_t start = clock(), diff;
+    clock_t start = clock();
+    double diff;
     transpose_cpu(mat, mat_gold);
-    diff = clock() - start;
-    int msec = diff * 1000 / CLOCKS_PER_SEC;
-    printf("CPU Transpose time taken: %3.1f seconds %f milliseconds \n", msec/1000, msec%1000);
+    diff = (double)(clock() - start);
+    double msec = diff * 1000.0 / CLOCKS_PER_SEC;
+    printf("CPU Transpose time taken: %f milliseconds \n", msec);
 
 
     float *d_in, *d_out;
