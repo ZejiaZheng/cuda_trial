@@ -35,7 +35,7 @@ __global__ void transpose_serial(float* mat, float* mat_new){
     }
 }
 
-__global__ transpose_parallel_row(float* mat, float* mat_new){
+__global__ void transpose_parallel_row(float* mat, float* mat_new){
     int i = threadIdx.x;
 
     for (int j = 0; j < N; j++){
