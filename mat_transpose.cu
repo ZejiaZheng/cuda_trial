@@ -50,6 +50,20 @@ __global__ void transpose_parallel_element(float* mat, float* mat_new){
     mat_new[j + i*N] = mat[i + j*N];
 }
 
+__global__ void transpose_parallel_element_tiling(float* mat, float* mat_new){
+    int in_corner_i = blockIdx.x * K, in_corner_j = blockIdx.y * K;
+    int out_corner_i = blockIdx.y * K, out_corner_j = blockIdx.x * K;
+
+    int x = threadIdx.x, y = threadIdx.y;
+
+    __shared__ float tile[K][K];
+
+    tile[y][x] = mat[(in_corner_i+x) + (in_corner_j+y)*N];
+    __syncthreads();
+
+    mat_new[out_corner_i+x + (out_corner_j+y)*N] = tile[x][y];
+}
+
 int main(int argc, char const *argv[])
 {
     size_t mat_size = N * N * sizeof(float);
@@ -105,8 +119,14 @@ int main(int argc, char const *argv[])
 
     printf("transpose_parallel_element: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
 
+    // transpose by tiling
+    timer.Start();
+    transpose_parallel_element_tiling<<<blocks,threads>>>(d_in, d_out);
+    timer.Stop();
 
+    cudaMemcpy(d_out, mat_new, mat_size, cudaMemcpyDeviceToHost);
 
+    printf("transpose_parallel_element_tiling: %g ms.\nVerifying transpose...%s\n", timer.Elapsed(), compare_matrices(mat_new, mat_gold) ? "Failed" : "Success");
     // show orignal mat, for debug purposes
     /*printf("original_mat: \n");
     for(int i = 0; i < N; i++){
