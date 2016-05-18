@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <iterator>
 #include <time.h>
+#include "timer.h"
 
 
 // simple routine to print contents of a vector
