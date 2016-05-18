@@ -74,6 +74,7 @@ int main(void)
 {
   const int numBins = 1024;
   const int N = numBins*10000;
+  const float stddev = 100.f;
 
   // generate random data on the host
   thrust::host_vector<int> input(N);
@@ -89,7 +90,7 @@ int main(void)
 
   // Generate the random values
   for (size_t i = 0; i < N; ++i) {
-    input[i] = std::min((unsigned int) std::max((int)normalDist(rng), 0), numBins - 1);
+    input[i] = std::min((unsigned int) std::max((int)normalDist(rng), 0), (unsigned int) (numBins - 1));
   }
 
   // demonstrate dense histogram method
@@ -104,7 +105,7 @@ int main(void)
   }
   end = clock();
   timer.Stop();
-  time_taken = (double)(end-start) * 1000.0/CLOCKS_PER_SEC;
+  double time_taken = (double)(end-start) * 1000.0/CLOCKS_PER_SEC;
   printf("time taken: %3.2f msecs\n", time_taken);
 
   
